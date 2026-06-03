@@ -65,4 +65,3 @@ The database contains the following tables and relationships:
   - `projectId`: string (Foreign Key -> projects.id)
   - `action`: string
   - `timestamp`: timestamp
-
