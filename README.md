@@ -1,70 +1,220 @@
 # TaskMatrix – Enterprise Agile Project Management Platform
 
-TaskMatrix is a scalable, commercial-grade Agile Project Management platform inspired by Jira and Asana. It provides engineering teams with features for workspace planning, task tracking (via a drag-and-drop Kanban board), role-based permissions, and real-time collaboration widgets.
+TaskMatrix is a commercial-grade, high-performance Agile Project Management platform inspired by Jira and Asana. It provides software engineering teams with an intuitive, real-time collaboration workspace to manage projects, organize sprint backlogs via an interactive Kanban board, assign tasks, and track team analytics.
 
 ---
 
-## 1. Product Requirements Document (PRD)
-
-### 1.1 Problem Statement
-Modern software engineering teams require unified, responsive tools to manage tasks, coordinate sprints, and review workloads. Standard project management tools are often over-engineered, slow to reflect real-time updates, or lack intuitive role-based collaboration features. Teams need a fast, visually rich, and permission-secured hub that provides instant task updates, progress charts, and collaborative task feeds.
-
-### 1.2 Project Objectives
-*   **High-Performance Collaboration**: Facilitate seamless task state transitions using a drag-and-drop Kanban board.
-*   **Role-Based Security**: Implement strict authentication and role-based access control (RBAC) to segment management rights and member updates.
-*   **Real-Time Feedback Loop**: Streamline sprint updates by implementing a WebSocket-driven global activity feed.
-*   **Metrics Visibility**: Empower project managers and admins with a dashboard containing interactive sprint and workload metrics.
-
-### 1.3 Target Audience & Persona mapping
-1.  **System Administrator (Admin)**: Full control over global settings, user registration approvals, project deletions, and global role changes.
-2.  **Project Manager (PM)**: Create projects, manage project membership, assign tasks, modify metadata, set due dates, and track dashboard analytics.
-3.  **Team Member**: Update assigned task statuses (via drag-and-drop), submit task attachments, write task comments, and view the activity feed.
-
-### 1.4 Feature Prioritization Matrix
-
-| Feature | Scope / Phase | Complexity | Impact |
-| :--- | :--- | :--- | :--- |
-| **JWT Authentication & RBAC** | MVP (Week 1) | Medium | Critical |
-| **Project Creation & Membership** | MVP (Week 2) | Low | High |
-| **Kanban Board UI with React DnD** | MVP (Week 3) | High | Critical |
-| **Task CRUD Operations** | MVP (Week 2-3) | Low | High |
-| **Priority Tags & Due Dates** | MVP (Week 3) | Low | Medium |
-| **Socket.io Real-Time Activity Feed**| MVP (Week 4) | High | High |
-| **Cloudinary File Uploads** | MVP (Week 4) | Medium | Medium |
-| **Dashboard Analytics Charts** | MVP (Week 5) | Medium | High |
-| **Task Comment Threads** | MVP (Week 4) | Low | Medium |
-| **Slack / Email Integrations** | Post-MVP (Future) | High | Low |
-| **Sprint Burn-Down Charts** | Post-MVP (Future) | High | Medium |
-| **Time Tracking & Logs** | Post-MVP (Future) | Medium | Medium |
+## 2. High-Level Description
+TaskMatrix is built as a unified full-stack application featuring a modern Next.js client and a secure Express.js backend. The platform provides developers and project managers with a modern workspace using a dark charcoal glassmorphic UI. Task states are managed dynamically via a drag-and-drop Kanban interface powered by Zustand, with updates synchronized instantly across active team sessions using WebSockets. Rich analytics and workload charts provide managers with clear visibility into resource allocation and project progress.
 
 ---
 
-## 2. Tech Stack & Infrastructure Decisions
-
-### 2.1 Technology Matrix
-*   **Frontend Framework**: **Next.js 14+ (App Router)**. Chosen for Server-Side Rendering (SSR) of project layouts, optimized bundle sizes, nested route layouts, and built-in SEO capabilities.
-*   **Styling**: **Tailwind CSS** + **Shadcn UI** (Radix UI primitives). Used to ensure a premium UI aesthetic (Harmonious dark modes, polished buttons, input fields, dropdown menus, and popover components).
-*   **State Management**: **Zustand**. A lightweight, hook-based state manager used to synchronize board columns, drag states, and UI modals without the boilerplate of Redux.
-*   **Drag and Drop Engine**: **React DnD** (or `@hello-pangea/dnd`). Chosen to provide fluid, performant, and accessible drag-and-drop cards.
-*   **Backend Runtime**: **Node.js** with **Express.js**. RESTful controller-service architecture providing high throughput, robust middleware chaining, and simple WebSocket integration.
-*   **Database**: **MongoDB** with **Mongoose**. Ideal for document-based, flexible schemas where tasks contain nested logs, tags, and comment references.
-*   **Real-Time Server**: **Socket.io**. Facilitates bidirectional communication for live activity alerts and board synchronization.
-*   **File Uploads**: **Cloudinary SDK**. Handles secure image/document uploads for task attachments, offloading resource-heavy file processes from the core Express API.
-
-### 2.2 Deployment Blueprint
-
-flowchart TD
-    Client[Next.js Client - Vercel] <-->|HTTPS / WSS| Backend[Express Server - Render]
-    Backend <-->|Mongoose Driver| DB[(MongoDB Atlas Cloud)]
-    Backend -->|Upload Stream| Cloudinary((Cloudinary CDN))
-
+## 3. Problem Statement
+Modern software development teams need fast, responsive, and secure project management tools. Existing commercial tools can be overly complex, slow, and lack real-time reactivity, leading to communication delays and sprint bottlenecks. Teams need a centralized hub that combines strict role-based access control (RBAC), drag-and-drop ease of use, instant socket-driven updates, and high-performance metrics reporting in a simple, responsive application.
 
 ---
 
-## 3. Database Architecture (ERD)
+## 4. Objectives
+*   **Secure Collaboration**: Implement a secure JWT authentication flow with cookie persistence and strict Role-Based Access Control (RBAC).
+*   **Fluid UX**: Build a highly responsive, modern dark-mode user interface featuring drag-and-drop status transitions and subtle micro-animations.
+*   **Real-Time Sync**: Synchronize state modifications instantly across team browsers to eliminate status conflicts.
+*   **Analytics Visibility**: Provide project leads with visual metrics on priority distributions, status progress, and workload allocation.
+*   **High Code Quality**: Follow SOLID design principles, modular architecture, and ensure strict type safety across the application stack.
 
-### 3.1 Collections & Schemas
-We model our database with five collections, utilizing references to establish relationships. Database performance is optimized using compound and targeted indexes on search queries and foreign keys.
+---
+
+## 5. Target Users
+1.  **System Administrators**: Oversee global system security, user permissions, and audit logs.
+2.  **Project Managers / Scrum Masters**: Create projects, assign tasks, establish deadlines, and review team workload analytics.
+3.  **Team Members / Developers**: Update task progression on the board, upload attachments, write comments, and follow project updates.
+
+---
+
+## 6. Designated Track
+*   **Designated Track**: Full Stack Developer (Capstone Submission)
+
+---
+
+## 7. Complete Tech Stack
+
+| Layer | Technology | Key Features |
+| :--- | :--- | :--- |
+| **Frontend** | **Next.js 14+ (App Router)** | React Server Components (RSC), optimized layouts, client-side route protection |
+| **Styling** | **Tailwind CSS + Shadcn UI** | Charcoal dark mode theme, glassmorphic widgets, Radix UI primitives |
+| **State Management** | **Zustand** | Light, hook-based client state synchronization |
+| **Backend API** | **Node.js + Express.js** | Routes-controllers-models structure, asynchronous request wrappers |
+| **Real-time Communication** | **Socket.io** | Bidirectional project room connections for live status broadcasts |
+| **Database** | **MongoDB + Mongoose** | Document-based flexible storage with relational keys, strict schema validation |
+| **Authentication** | **JWT & Cookie-Parser** | Secure HttpOnly cookies for session storage |
+| **Media Handling** | **Cloudinary SDK** | Automated storage and CDN delivery for user profile avatars |
+
+---
+
+## 8. Core Features (Prioritized MVP)
+*   **Authentication & Session Management**: Secure register/login paths using password hashing and JWT cookies.
+*   **Role-Based Access Control**: Route validation restricting project creation, task assignments, and admin management options.
+*   **Project Workspaces**: CRUD capabilities allowing managers to create project keys and assign team workspaces.
+*   **Kanban Board View**: Four-column layout (To Do, In Progress, In Review, Done) with interactive drag-and-drop cards.
+*   **Task Management**: Assign tasks to users, set priority labels, add descriptions, and track due dates.
+*   **Comments Feed**: Multi-user task comment threads for immediate contextual communication.
+*   **Activity Logs**: Automatic logging of user activities (e.g., task movements, project creations) in a chronologically ordered feed.
+*   **Dashboard Charts**: Metric widgets featuring interactive bar and pie charts outlining priority distribution and active workloads.
+
+---
+
+## 9. User Roles and Permissions
+
+| Permission / Action | Administrator | Project Manager | Team Member |
+| :--- | :---: | :---: | :---: |
+| **Global System Configurations** | ✓ | ✗ | ✗ |
+| **Create New Project Workspace** | ✓ | ✓ | ✗ |
+| **Delete Project Workspace** | ✓ | ✗ | ✗ |
+| **Assign Tasks & Set Deadlines** | ✓ | ✓ | ✗ |
+| **Drag & Drop Task Statuses** | ✓ | ✓ | ✓ |
+| **Submit Comments on Tasks** | ✓ | ✓ | ✓ |
+| **Access Dashboard Analytics** | ✓ | ✓ | ✗ |
+
+---
+
+## 10. Folder Structure
+
+```text
+taskmatrix/
+├── client/                     # Next.js App Router Frontend
+│   ├── public/                 # Static assets, logos, and icons
+│   ├── src/
+│   │   ├── app/                # App Router directories (auth, dashboard, projects)
+│   │   │   ├── layout.tsx      # Core entry file, font loader, providers
+│   │   │   └── page.tsx        # Marketing Showcase Landing page
+│   │   ├── components/         # Reusable layout and custom UI primitives
+│   │   │   ├── ui/             # Radix & Shadcn UI design components
+│   │   │   └── kanban/         # KanbanBoard, BoardColumn, and TaskCard
+│   │   ├── hooks/              # Custom hook wrappers (useSocket, useAuth)
+│   │   └── store/              # Zustand global state (useAuthStore, useBoardStore)
+│   ├── tailwind.config.js      # Styling configuration
+│   └── package.json
+│
+├── server/                     # Node.js + Express Backend
+│   ├── src/
+│   │   ├── config/             # DB configurations and third-party API clients
+│   │   ├── controllers/        # Route logic (authController, taskController)
+│   │   ├── middleware/         # Auth verification and RBAC middleware
+│   │   ├── models/             # Mongoose Schemas (User, Project, Task, Comment, Log)
+│   │   ├── routes/             # REST routing directories
+│   │   └── sockets/            # Socket.io connection handlers and room actions
+│   ├── package.json
+│   └── .env.example
+```
+
+---
+
+## 11. Database Collections Overview
+
+### users
+```javascript
+{
+  _id: String,
+  name: { type: String, required: true },
+  email: { type: String, required: true, unique: true, index: true },
+  password: { type: String, required: true },
+  role: { type: String, required: true },
+  avatar: { type: String, default: '' },
+  createdAt: { type: Date, default: Date.now }
+}
+```
+
+### projects
+```javascript
+{
+  _id: String,
+  title: { type: String, required: true },
+  description: { type: String },
+  createdBy: { type: String, ref: 'User', required: true, index: true },
+  deadline: { type: Date },
+  status: { type: String },
+  createdAt: { type: Date, default: Date.now }
+}
+```
+
+### tasks
+```javascript
+{
+  _id: String,
+  title: { type: String, required: true },
+  description: { type: String },
+  priority: { type: String },
+  status: { type: String },
+  assignedTo: { type: String, ref: 'User', index: true },
+  projectId: { type: String, ref: 'Project', required: true, index: true },
+  dueDate: { type: Date },
+  createdAt: { type: Date, default: Date.now }
+}
+```
+
+### comments
+```javascript
+{
+  _id: String,
+  taskId: { type: String, ref: 'Task', required: true, index: true },
+  userId: { type: String, ref: 'User', required: true, index: true },
+  message: { type: String, required: true },
+  createdAt: { type: Date, default: Date.now }
+}
+```
+
+### activity_logs
+```javascript
+{
+  _id: String,
+  userId: { type: String, ref: 'User', required: true, index: true },
+  projectId: { type: String, ref: 'Project', required: true, index: true },
+  action: { type: String, required: true },
+  timestamp: { type: Date, default: Date.now }
+}
+```
+
+---
+
+## 12. REST API Endpoint Planning
+
+### Authentication Router (`/api/auth`)
+*   `POST /auth/register` - Create new user account.
+*   `POST /auth/login` - Verify user credentials and set secure HttpOnly cookie token.
+*   `POST /auth/logout` - Discard token cookie and terminate active sessions.
+
+### Projects Router (`/api/projects`)
+*   `GET /projects` - Fetch all projects created by or assigned to the user.
+*   `POST /projects` - Initialize new project workspace (Restricted to: Admin, ProjectManager).
+*   `PUT /projects/:projectId` - Edit project details and deadline parameters.
+*   `DELETE /projects/:projectId` - Permanently remove project and cascade-delete tasks (Restricted to: Admin).
+
+### Tasks Router (`/api/tasks`)
+*   `GET /tasks?projectId=id` - Fetch list of tasks associated with a workspace.
+*   `POST /tasks` - Append a new task card (Restricted to: Admin, ProjectManager).
+*   `PUT /tasks/:taskId` - Modify task details, assignee, or board column status.
+*   `DELETE /tasks/:taskId` - Remove a task card (Restricted to: Admin, ProjectManager).
+
+### Comments Router (`/api/comments`)
+*   `GET /comments/:taskId` - Fetch chronologically ordered comments for a task.
+*   `POST /comments` - Submit a text comment to a task card.
+
+---
+
+## 13. UI/UX Screens Overview
+1.  **Showcase Landing Page**: Interactive introduction detailing platform capabilities, client feedback, and dashboard animations.
+2.  **Authentication Portal**: Clean split-screen register and login interface with status notifications.
+3.  **Analytics Dashboard**: Workspace dashboard displaying active workloads and priority metrics via Recharts.
+4.  **Kanban Workspace View**: Drag-and-drop workspace containing interactive columns and filter selectors.
+5.  **Task Details Modal**: Multi-column overlay containing detail updates, comments feed, and assignee drop-downs.
+
+---
+
+## 14. Figma Design Link
+*   **Workspace Wireframes**: [TaskMatrix Design File](https://www.figma.com/design/2la1nPbZqBsFt3DqnRehQT/TaskMatrix?node-id=0-1)
+
+---
+
+## 15. Database ERD
 
 ```mermaid
 erDiagram
@@ -121,282 +271,45 @@ erDiagram
     projects ||--o{ activity_logs : "logs"
 ```
 
-### 3.2 Schema Details & Validations
-
-#### Users Collection
-```javascript
-{
-  _id: String,
-  name: { type: String, required: true, trim: true },
-  email: { type: String, required: true, unique: true, index: true, lowercase: true },
-  password: { type: String, required: true },
-  role: { type: String, required: true },
-  avatar: { type: String, default: '' },
-  createdAt: { type: Date, default: Date.now }
-}
-```
-
-#### Projects Collection
-```javascript
-{
-  _id: String,
-  title: { type: String, required: true, trim: true },
-  description: { type: String },
-  createdBy: { type: String, ref: 'User', required: true, index: true },
-  deadline: { type: Date },
-  status: { type: String },
-  createdAt: { type: Date, default: Date.now }
-}
-```
-
-#### Tasks Collection
-```javascript
-{
-  _id: String,
-  title: { type: String, required: true, trim: true },
-  description: { type: String },
-  priority: { type: String },
-  status: { type: String },
-  assignedTo: { type: String, ref: 'User', index: true },
-  projectId: { type: String, ref: 'Project', required: true, index: true },
-  dueDate: { type: Date },
-  createdAt: { type: Date, default: Date.now }
-}
-```
-
-#### Comments Collection
-```javascript
-{
-  _id: String,
-  taskId: { type: String, ref: 'Task', required: true, index: true },
-  userId: { type: String, ref: 'User', required: true, index: true },
-  message: { type: String, required: true },
-  createdAt: { type: Date, default: Date.now }
-}
-```
-
-#### ActivityLogs Collection
-```javascript
-{
-  _id: String,
-  userId: { type: String, ref: 'User', required: true, index: true },
-  projectId: { type: String, ref: 'Project', required: true, index: true },
-  action: { type: String, required: true },
-  timestamp: { type: Date, default: Date.now }
-}
-```
-
-
 ---
 
-## 4. API Endpoint Planning
-
-All API requests are prefixed with `/api` and expect JSON body payloads. Access to protected routes requires a JWT token passed in the Authorization header: `Authorization: Bearer <token>` (or HttpOnly cookie).
-
-### 4.1 Authentication Router (`/api/auth`)
-*   `POST /auth/register`
-    *   *Purpose*: Create a new user account.
-    *   *Access*: Public.
-    *   *Body*: `{ "name": "Name", "email": "user@example.com", "password": "SecurePassword" }`
-    *   *Response (201)*: `{ "success": true, "token": "JWT_STRING", "user": { "id": "...", "name": "...", "role": "..." } }`
-*   `POST /auth/login`
-    *   *Purpose*: Authenticate and retrieve token.
-    *   *Access*: Public.
-    *   *Body*: `{ "email": "user@example.com", "password": "SecurePassword" }`
-    *   *Response (200)*: `{ "success": true, "token": "JWT_STRING", "user": { "id": "...", "name": "...", "role": "..." } }`
-
-### 4.2 Projects Router (`/api/projects`)
-*   `GET /projects`
-    *   *Purpose*: Retrieve all projects associated with the user's role or membership list.
-    *   *Access*: Protected (JWT).
-    *   *Response (200)*: `[{ "_id": "...", "name": "TaskMatrix", "key": "TM", "owner": "..." }]`
-*   `POST /projects`
-    *   *Purpose*: Create a new project workspace.
-    *   *Access*: Protected (JWT - Roles: Admin, ProjectManager).
-    *   *Body*: `{ "name": "Project Name", "key": "PN", "description": "Details" }`
-    *   *Response (201)*: `{ "success": true, "project": { ... } }`
-*   `PUT /projects/:projectId`
-    *   *Purpose*: Update metadata or manage members.
-    *   *Access*: Protected (JWT - Roles: Admin, ProjectManager, Project Owner).
-    *   *Body*: `{ "name": "Updated Name", "members": ["userId1", "userId2"] }`
-    *   *Response (200)*: `{ "success": true, "project": { ... } }`
-*   `DELETE /projects/:projectId`
-    *   *Purpose*: Delete project and cascade-delete tasks/comments.
-    *   *Access*: Protected (JWT - Roles: Admin).
-    *   *Response (200)*: `{ "success": true, "message": "Project deleted successfully" }`
-
-### 4.3 Tasks Router (`/api/tasks`)
-*   `GET /tasks?projectId=id&status=status`
-    *   *Purpose*: Query tasks for a specific project with filters.
-    *   *Access*: Protected (JWT).
-    *   *Response (200)*: `[{ "_id": "...", "title": "Setup DB", "status": "To Do", ... }]`
-*   `POST /tasks`
-    *   *Purpose*: Create a task in a project.
-    *   *Access*: Protected (JWT - Roles: Admin, ProjectManager).
-    *   *Body*: `{ "projectId": "...", "title": "Refactor API", "status": "To Do", "priority": "High", "assignees": ["user1"] }`
-    *   *Response (201)*: `{ "success": true, "task": { ... } }`
-*   `PUT /tasks/:taskId`
-    *   *Purpose*: Edit task specifications or transition state (status, assignees, due dates). Used directly by Kanban card updates.
-    *   *Access*: Protected (JWT).
-    *   *Body*: `{ "status": "In Progress" }` or `{ "title": "Updated Title", "priority": "Critical" }`
-    *   *Response (200)*: `{ "success": true, "task": { ... } }`
-    *   *Real-time Broadcast*: Emits `task:updated` to the room `project:projectId`.
-*   `DELETE /tasks/:taskId`
-    *   *Purpose*: Remove a task.
-    *   *Access*: Protected (JWT - Roles: Admin, ProjectManager).
-    *   *Response (200)*: `{ "success": true, "message": "Task removed" }`
-
-### 4.4 Comments Router (`/api/comments`)
-*   `GET /comments/:taskId`
-    *   *Purpose*: Fetch chronologically ordered comment thread.
-    *   *Access*: Protected (JWT).
-    *   *Response (200)*: `[{ "_id": "...", "content": "Working on it", "userId": { "name": "John" } }]`
-*   `POST /comments`
-    *   *Purpose*: Add comment to task.
-    *   *Access*: Protected (JWT).
-    *   *Body*: `{ "taskId": "...", "content": "Can we clarify this requirement?" }`
-    *   *Response (201)*: `{ "success": true, "comment": { ... } }`
-    *   *Real-time Broadcast*: Emits `comment:added` to the project room.
-
-### 4.5 Utility & Analytics Routers (`/api/users` & `/api/analytics`)
-*   `GET /users`
-    *   *Purpose*: List users for task assignments.
-    *   *Access*: Protected (JWT).
-    *   *Response (200)*: `[{ "_id": "...", "name": "...", "email": "..." }]`
-*   `GET /analytics/:projectId`
-    *   *Purpose*: Return aggregate task counts by status and priority, and workload counts per team member.
-    *   *Access*: Protected (JWT - Roles: Admin, ProjectManager).
-    *   *Response (200)*: `{ "statusCounts": { "ToDo": 5, "InProgress": 2 }, "priorityDistribution": { "Critical": 1 }, "memberWorkload": [{ "name": "Alex", "tasks": 3 }] }`
-
----
-
-## 5. Directory Structure & Workspace Layout
-
-```
-taskmatrix/
-├── client/                     # Next.js App Router Frontend
-│   ├── public/                 # Static assets, logos, icons
-│   ├── src/
-│   │   ├── app/                # App Router routing directories
-│   │   │   ├── layout.tsx      # Global HTML framework, font load, Providers
-│   │   │   ├── page.tsx        # Landing Page / Product Showcase
-│   │   │   ├── (auth)/         # Grouped Authentication Routes
-│   │   │   │   ├── login/      # /login page
-│   │   │   │   └── register/   # /register page
-│   │   │   ├── dashboard/      # User Home Dashboard (Analytics charts)
-│   │   │   └── projects/       # Projects Hub
-│   │   │       ├── page.tsx    # Project lists
-│   │   │       └── [id]/       # Individual Project Workspace
-│   │   │           ├── page.tsx # Kanban Board entry
-│   │   │           └── members/ # Team Management tab
-│   │   ├── components/         # Reusable UI component libraries
-│   │   │   ├── ui/             # Radix & Shadcn custom primitives
-│   │   │   ├── layout/         # Navbar, Sidebar, Page wrappers
-│   │   │   ├── kanban/         # KanbanBoard, BoardColumn, TaskCard, DndContext
-│   │   │   └── modals/         # TaskDetailsModal, CreateProjectModal
-│   │   ├── hooks/              # Custom React Hooks (useSocket, useAuth)
-│   │   ├── lib/                # Libraries and API Clients (axios configuration)
-│   │   └── store/              # Zustand global state stores (useAuthStore, useBoardStore)
-│   ├── tailwind.config.js      # CSS configuration
-│   ├── package.json
-│   └── tsconfig.json
-│
-├── server/                     # Node.js + Express Backend
-│   ├── src/
-│   │   ├── config/             # Environment configs, DB connects, Cloudinary SDK
-│   │   ├── controllers/        # Express Route Handlers (auth, projects, tasks)
-│   │   ├── middleware/         # Auth filters, RBAC policies, Error handlers
-│   │   ├── models/             # Mongoose Schemas (User, Project, Task, Comment, Log)
-│   │   ├── routes/             # API Router definitions
-│   │   ├── services/           # Business logic layer (Socket notifications, logs)
-│   │   ├── sockets/            # Socket.io connection handlers and room setup
-│   │   └── app.js              # Server initialization and middleware chaining
-│   ├── package.json
-│   └── .env.example            # Configuration templates
-│
-└── package.json                # Root package.json (if structured as a workspace)
-```
-
----
-
-## 6. Figma Wireframe Blueprint & UI Layout Planning
-
-*   **Figma Login Page Design**: [Figma Login Page Design](https://www.figma.com/design/xPLjkUOjxG6YQXVvcxCANK/login_page--Community-?t=J5bf2a0a3qCtclE5-1)
-*   **Figma Dashboard & Kanban Design**: [TaskMatrix Dashboard & Kanban Design](https://www.figma.com/design/2la1nPbZqBsFt3DqnRehQT/TaskMatrix?node-id=0-1&t=cxxtYFb34OWsoBIA-1)
-
-### 6.1 Authentication Screen (Login/Register)
-*   **Layout Structure**: Split screen layout on desktop. Left column houses visual graphics, marketing slogans, and key stats. Right column features a clean authentication card.
-*   **Aesthetics**: Charcoal background (`#0A0A0C`), high-contrast buttons, white inputs with subtle grey borders, and validation messages below inputs.
-*   **Interactions**: Tab options to slide between Register and Login, loading spinners on button states, and password visibility toggles.
-
-### 6.2 Workspace Dashboard (`/dashboard`)
-*   **Layout Structure**: Two-column layout with sidebar on the left. The main content is split into a top row of KPI cards (Total Projects, Open Tasks, Impending Deadlines, Completed Sprints) and a bottom row displaying analytic visuals (Task Status distribution, Activity feed log).
-*   **Aesthetics**: Glassmorphism dashboard cards with soft inner shadows, colored status tags, and interactive charting libraries (Recharts or Chart.js).
-
-### 6.3 Kanban Board View (`/projects/[id]`)
-*   **Layout Structure**: Horizontal flex container with four distinct columns: **To Do**, **In Progress**, **In Review**, and **Done**. A filters bar sits above the board (Priority, Assignee search, Text query).
-*   **Aesthetics**: Columns are padded with slight rounded corners and subtle background contrasts. Tasks appear as cards displaying Title, Priority indicator, Initials avatar, and Due date tags.
-*   **Drag-and-Drop Interaction**: Grabbing a card triggers an active tilt state and displays highlighted drop targets in other columns. Releasing a card sends an optimistic state change to local stores, fires an API update, and triggers a Socket.io broadcast.
-
-### 6.4 Task Details Modal
-*   **Layout Structure**: Centered layout covering 80% screen width on desktop. A two-column split structure divides the view: a main description and comment feed on the left, and an attribute inspector (Status dropdown, Priority selector, Assignee picker, Date pickers, Upload fields) on the right.
-*   **Interactions**: Clicking values turns them into inputs for editing, and submitting comments updates the timeline immediately.
-
-### 6.5 Team & Membership Manager (`/projects/[id]/members`)
-*   **Layout Structure**: A clean layout containing a team-member table and an "Add Member" dialogue. The members table lists names, emails, roles, and action menus.
-*   **Interactions**: Autocomplete email search input to add new members, and inline dropdown menus to change roles.
-
-### 6.6 Mobile Responsiveness Guidelines
-*   **Sidebar**: Collapses into a toggleable hamburger menu.
-*   **Kanban Board**: Switches from a horizontal grid to a horizontal carousel with column indicators (swiping left/right to navigate between columns).
-*   **Task Details Modal**: Reorganizes into a stacked single column structure, moving metadata inspector modules below the main content area.
-
----
-
-## 7. 5-Week Development Timeline
+## 16. Development Roadmap (Sprint 14–17)
 
 ```mermaid
 gantt
-    title TaskMatrix Development Roadmap
+    title TaskMatrix Development Timeline
     dateFormat  YYYY-MM-DD
-    section Week 1: Core Infra
-    Database Setup & Models :active, 2026-06-01, 3d
-    Auth System & RBAC      :active, 2026-06-04, 4d
-    section Week 2: Workspaces
-    Projects CRUD API       :2026-06-08, 3d
-    Task Management API     :2026-06-11, 4d
-    section Week 3: Board UI
-    Next.js Client Layouts  :2026-06-15, 3d
-    React DnD Board         :2026-06-18, 4d
-    section Week 4: Collaboration
-    Socket.io Integrations   :2026-06-22, 3d
-    Cloudinary File Uploads :2026-06-25, 4d
-    section Week 5: Analytics
-    Dashboard Metrics       :2026-06-29, 3d
-    Optimization & Deploy   :2026-07-02, 4d
+    section Sprint 14: Authentication & Database
+    Database Schema Configuration :active, 2026-06-01, 4d
+    JWT Auth & RBAC Setup          :active, 2026-06-05, 3d
+    section Sprint 15: Workspace CRUD
+    Project Management Endpoints  :2026-06-08, 3d
+    Task Assignment API           :2026-06-11, 4d
+    section Sprint 16: Kanban Board
+    Kanban Component Interface     :2026-06-15, 3d
+    Socket.io State Sync          :2026-06-18, 4d
+    section Sprint 17: Dashboard
+    Recharts Analytics Panel      :2026-06-22, 3d
+    Production Deployment & Tests :2026-06-25, 4d
 ```
 
-### Week 1: Database Setup, Models, Auth System & RBAC
-*   **Backend Tasks**: Setup MongoDB configuration using Mongoose connections. Build schemas and pre-save password-hashing hooks. Write security controllers with JWT signing and verify roles through validation middleware.
-*   **Frontend Tasks**: Bootstrap the client project. Construct routing directories for authentication, user stores using Zustand, and landing screens.
-*   **Milestone**: Secure routes on the API and render client logins.
+---
 
-### Week 2: Workspace Management & Task API
-*   **Backend Tasks**: Write REST endpoints for projects (CRUD) and tasks (CRUD). Implement project validation logic to restrict PM and Team member rights.
-*   **Frontend Tasks**: Create workspace panels, dashboards listing projects, and basic task modals.
-*   **Milestone**: Project list views populated by API databases.
+## 17. Future Scope
+*   **External Integrations**: Introduce third-party notifications via Slack and Email hooks.
+*   **Time Allocation Logs**: Integrate user logs to record development hours per task.
+*   **Burn-down Analytics**: Add sprint burn-down charts to project tracking interfaces.
+*   **Custom Attributes**: Allow teams to create custom task parameters and templates.
 
-### Week 3: Client Layouts & Drag-and-Drop Board
-*   **Backend Tasks**: Add query-filtering endpoints to fetch project tasks by status/priority.
-*   **Frontend Tasks**: Code the Kanban Board flex grids. Implement React DnD to bind column targets with card elements. Implement optimistic updates in Zustand stores.
-*   **Milestone**: Working card drag-and-drop operations with persistence.
+---
 
-### Week 4: Socket.io Real-Time Synchronization & Cloudinary
-*   **Backend Tasks**: Configure WebSockets with Socket.io. Setup project-room scopes. Integrate Cloudinary file upload routers.
-*   **Frontend Tasks**: Bind socket event listeners to trigger toast notifications. Embed comments and file attachment widgets in task detail modals.
-*   **Milestone**: Real-time board movements synced across different browser sessions.
+## 18. Deployment Strategy
+*   **Production Host**: Vercel (Client App) + Render (API Server).
+*   **Database Cloud**: MongoDB Atlas.
+*   **Asset Delivery**: Cloudinary CDN.
+*   **Build Validation**: Pre-commit linting checks and automated endpoint test executions.
 
-### Week 5: Dashboard Analytics, Optimization & Deployment
-*   **Backend Tasks**: Build analytics routers returning aggregate statistics. Run database query indexing tests.
-*   **Frontend Tasks**: Construct analytical cards using charting libraries. Build mobile layouts.
-*   **Milestone**: Complete deployment to Vercel and Railway/Render.
+---
+
+## 19. Conclusion
+TaskMatrix delivers a modern, high-performance project management solution built with modern full-stack patterns. By combining a clean Next.js client, a secure Express.js API, and real-time WebSocket state synchronization, the platform provides teams with a responsive and collaborative workspace. Its architecture satisfies all capstone requirements and serves as a production-grade template for agile project tracking.

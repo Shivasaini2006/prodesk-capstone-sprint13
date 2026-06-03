@@ -66,19 +66,3 @@ The database contains the following tables and relationships:
   - `action`: string
   - `timestamp`: timestamp
 
-### Relationships
-- A user can create many projects (`projects.createdBy > users.id`).
-- A task can be assigned to a user (`tasks.assignedTo > users.id`).
-- A project contains many tasks (`tasks.projectId > projects.id`).
-- A task contains many comments (`comments.taskId > tasks.id`).
-- A comment is written by a user (`comments.userId > users.id`).
-- An activity log is triggered by a user (`activity_logs.userId > users.id`).
-- An activity log belongs to a project (`activity_logs.projectId > projects.id`).
-
-## Key Features to Implement
-1. **User Authentication & Authorization**: Signup, login, JWT-based route protection, role-based access control.
-2. **Project Workspace Management**: CRUD endpoints and layouts for projects.
-3. **Kanban Board Board View**: Drag-and-drop task card movement with optimistic state updates in Zustand.
-4. **Real-time Synchronization**: Socket.io rooms to broadcast task updates and comment alerts to project members.
-5. **Activity Log Feed**: Chronological list of user events per project.
-```
