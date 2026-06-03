@@ -19,49 +19,69 @@ Build a complete, production-ready full-stack Agile Project Management platform 
 - **Database**: MongoDB + Mongoose.
 - **Real-Time**: Socket.io for live activity updates and workspace synchronization.
 
-## Database Schema (ERD)
-The database contains the following tables and relationships:
+## Database Schema (ERD DBML)
+```dbml
+Table users {
+id string [pk]
+name string
+email string [unique]
+password string
+role string
+avatar string
+createdAt timestamp
+}
 
-### Tables
-- **users**:
-  - `id`: string (Primary Key)
-  - `name`: string
-  - `email`: string (Unique)
-  - `password`: string
-  - `role`: string
-  - `avatar`: string
-  - `createdAt`: timestamp
+Table projects {
+id string [pk]
+title string
+description text
+createdBy string
+deadline date
+status string
+createdAt timestamp
+}
 
-- **projects**:
-  - `id`: string (Primary Key)
-  - `title`: string
-  - `description`: text
-  - `createdBy`: string (Foreign Key -> users.id)
-  - `deadline`: date
-  - `status`: string
-  - `createdAt`: timestamp
+Table tasks {
+id string [pk]
+title string
+description text
+priority string
+status string
+assignedTo string
+projectId string
+dueDate date
+createdAt timestamp
+}
 
-- **tasks**:
-  - `id`: string (Primary Key)
-  - `title`: string
-  - `description`: text
-  - `priority`: string
-  - `status`: string
-  - `assignedTo`: string (Foreign Key -> users.id)
-  - `projectId`: string (Foreign Key -> projects.id)
-  - `dueDate`: date
-  - `createdAt`: timestamp
+Table comments {
+id string [pk]
+taskId string
+userId string
+message text
+createdAt timestamp
+}
 
-- **comments**:
-  - `id`: string (Primary Key)
-  - `taskId`: string (Foreign Key -> tasks.id)
-  - `userId`: string (Foreign Key -> users.id)
-  - `message`: text
-  - `createdAt`: timestamp
+Table activity_logs {
+id string [pk]
+userId string
+projectId string
+action string
+timestamp timestamp
+}
 
-- **activity_logs**:
-  - `id`: string (Primary Key)
-  - `userId`: string (Foreign Key -> users.id)
-  - `projectId`: string (Foreign Key -> projects.id)
-  - `action`: string
-  - `timestamp`: timestamp
+Ref: projects.createdBy > users.id
+Ref: tasks.assignedTo > users.id
+Ref: tasks.projectId > projects.id
+Ref: comments.taskId > tasks.id
+Ref: comments.userId > users.id
+Ref: activity_logs.userId > users.id
+Ref: activity_logs.projectId > projects.id
+```
+
+## Key Features to Implement
+1. **User Authentication & Authorization**: Signup, login, JWT-based route protection, role-based access control.
+2. **Project Workspace Management**: CRUD endpoints and layouts for projects.
+3. **Kanban Board View**: Drag-and-drop task card movement with optimistic state updates in Zustand.
+4. **Real-time Synchronization**: Socket.io rooms to broadcast task updates and comment alerts to project members.
+5. **Activity Log Feed**: Chronological list of user events per project.
+```
