@@ -119,7 +119,6 @@ taskmatrix/
   password: { type: String, required: true },
   role: { type: String, required: true },
   avatar: { type: String, default: '' },
-  createdAt: { type: Date, default: Date.now }
 }
 ```
 
@@ -131,8 +130,6 @@ taskmatrix/
   description: { type: String },
   createdBy: { type: String, ref: 'User', required: true, index: true },
   deadline: { type: Date },
-  status: { type: String },
-  createdAt: { type: Date, default: Date.now }
 }
 ```
 
@@ -143,11 +140,9 @@ taskmatrix/
   title: { type: String, required: true },
   description: { type: String },
   priority: { type: String },
-  status: { type: String },
   assignedTo: { type: String, ref: 'User', index: true },
   projectId: { type: String, ref: 'Project', required: true, index: true },
   dueDate: { type: Date },
-  createdAt: { type: Date, default: Date.now }
 }
 ```
 
@@ -158,7 +153,6 @@ taskmatrix/
   taskId: { type: String, ref: 'Task', required: true, index: true },
   userId: { type: String, ref: 'User', required: true, index: true },
   message: { type: String, required: true },
-  createdAt: { type: Date, default: Date.now }
 }
 ```
 
@@ -168,9 +162,7 @@ taskmatrix/
   _id: String,
   userId: { type: String, ref: 'User', required: true, index: true },
   projectId: { type: String, ref: 'Project', required: true, index: true },
-  action: { type: String, required: true },
-  timestamp: { type: Date, default: Date.now }
-}
+  action: { type: String, required: true },}
 ```
 
 ---
