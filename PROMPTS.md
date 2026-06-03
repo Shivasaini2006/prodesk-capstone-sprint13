@@ -2,19 +2,14 @@
 
 This document contains the primary developer prompt used to generate and guide the development of the ProDesk capstone project.
 
----
-
-## Main Full-Stack Application Prompt
-
-Use this prompt to initialize and build the MERN full-stack Agile Project Management platform.
 
 ### Prompt Text
 
 ```markdown
-Build a complete, production-ready full-stack Agile Project Management platform named ProDesk (TaskMatrix).
+Build a complete, production-ready full-stack  Project Management platform 
 
 ## Tech Stack Requirements
-- **Frontend**: Next.js 14+ (App Router) / React, Tailwind CSS, Zustand for state management.
+- **Frontend**: Next.js  (App Router) / React, Tailwind CSS, Zustand for state management.
 - **Backend**: Node.js + Express.js, modular structure (routes, controllers, models, middleware).
 - **Database**: MongoDB + Mongoose.
 - **Real-Time**: Socket.io for live activity updates and workspace synchronization.
@@ -78,10 +73,3 @@ Ref: activity_logs.userId > users.id
 Ref: activity_logs.projectId > projects.id
 ```
 
-## Key Features to Implement
-1. **User Authentication & Authorization**: Signup, login, JWT-based route protection, role-based access control.
-2. **Project Workspace Management**: CRUD endpoints and layouts for projects.
-3. **Kanban Board View**: Drag-and-drop task card movement with optimistic state updates in Zustand.
-4. **Real-time Synchronization**: Socket.io rooms to broadcast task updates and comment alerts to project members.
-5. **Activity Log Feed**: Chronological list of user events per project.
-```
