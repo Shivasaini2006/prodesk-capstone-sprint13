@@ -63,73 +63,62 @@ flowchart TD
 
 ## 3. Database Architecture (ERD)
 
-*   **Interactive ERD Link**: [dbdiagram.io - TaskMatrix ERD](https://dbdiagram.io/d/Task-Matrix-ERD-6a1fe77ef15b4b045262d666)
-
 ### 3.1 Collections & Schemas
-We model our database with five collections, utilizing references (`ObjectId`) to establish relationships. Database performance is optimized using compound and targeted indexes on search queries and foreign keys.
+We model our database with five collections, utilizing references to establish relationships. Database performance is optimized using compound and targeted indexes on search queries and foreign keys.
 
 ```mermaid
 erDiagram
-    USER {
-        ObjectId id PK
+    users {
+        string id PK
         string name
-        string email UK "Index"
-        string passwordHash
-        string role "Admin | ProjectManager | TeamMember"
-        string avatarUrl
-        date createdAt
-        date updatedAt
+        string email UK
+        string password
+        string role
+        string avatar
+        timestamp createdAt
     }
-    PROJECT {
-        ObjectId id PK
-        string name
-        string key UK
-        string description
-        ObjectId owner FK "Ref: User"
-        array members "Ref: User"
-        date createdAt
-        date updatedAt
-    }
-    TASK {
-        ObjectId id PK
-        ObjectId projectId FK "Ref: Project, Index"
+    projects {
+        string id PK
         string title
-        string description
-        string status "To Do | In Progress | In Review | Done"
-        string priority "Low | Medium | High | Critical"
-        array assignees FK "Refs: User"
-        ObjectId reporter FK "Ref: User"
+        text description
+        string createdBy FK
+        date deadline
+        string status
+        timestamp createdAt
+    }
+    tasks {
+        string id PK
+        string title
+        text description
+        string priority
+        string status
+        string assignedTo FK
+        string projectId FK
         date dueDate
-        array attachments
-        array tags
-        date createdAt
-        date updatedAt
+        timestamp createdAt
     }
-    COMMENT {
-        ObjectId id PK
-        ObjectId taskId FK "Ref: Task, Index"
-        ObjectId userId FK "Ref: User"
-        string content
-        date createdAt
-        date updatedAt
+    comments {
+        string id PK
+        string taskId FK
+        string userId FK
+        text message
+        timestamp createdAt
     }
-    ACTIVITY_LOG {
-        ObjectId id PK
-        ObjectId projectId FK "Ref: Project, Index"
-        ObjectId taskId FK "Ref: Task"
-        ObjectId userId FK "Ref: User"
+    activity_logs {
+        string id PK
+        string userId FK
+        string projectId FK
         string action
-        string description
-        date createdAt
+        timestamp timestamp
     }
 
-    USER ||--o{ PROJECT : "owns"
-    USER ||--o{ TASK : "reports"
-    USER ||--o{ COMMENT : "writes"
-    USER ||--o{ ACTIVITY_LOG : "triggers"
-    PROJECT ||--o{ TASK : "contains"
-    TASK ||--o{ COMMENT : "hosts"
-    TASK ||--o{ ACTIVITY_LOG : "logs"
+    users ||--o{ projects : "created"
+    users ||--o{ tasks : "assigned"
+    projects ||--o{ tasks : "contains"
+    tasks ||--o{ comments : "hosts"
+    users ||--o{ comments : "writes"
+    users ||--o{ activity_logs : "triggers"
+    projects ||--o{ activity_logs : "logs"
 ```
 
 ### 3.2 Schema Details & Validations
@@ -137,78 +126,66 @@ erDiagram
 #### Users Collection
 ```javascript
 {
-  _id: ObjectId,
+  _id: String,
   name: { type: String, required: true, trim: true },
   email: { type: String, required: true, unique: true, index: true, lowercase: true },
-  passwordHash: { type: String, required: true },
-  role: { type: String, enum: ['Admin', 'ProjectManager', 'TeamMember'], default: 'TeamMember' },
-  avatarUrl: { type: String, default: '' },
-  createdAt: Date,
-  updatedAt: Date
+  password: { type: String, required: true },
+  role: { type: String, required: true },
+  avatar: { type: String, default: '' },
+  createdAt: { type: Date, default: Date.now }
 }
 ```
 
 #### Projects Collection
 ```javascript
 {
-  _id: ObjectId,
-  name: { type: String, required: true, trim: true },
-  key: { type: String, required: true, unique: true, uppercase: true },
+  _id: String,
+  title: { type: String, required: true, trim: true },
   description: { type: String },
-  owner: { type: ObjectId, ref: 'User', required: true, index: true },
-  members: [{ type: ObjectId, ref: 'User' }],
-  createdAt: Date,
-  updatedAt: Date
+  createdBy: { type: String, ref: 'User', required: true, index: true },
+  deadline: { type: Date },
+  status: { type: String },
+  createdAt: { type: Date, default: Date.now }
 }
 ```
 
 #### Tasks Collection
 ```javascript
 {
-  _id: ObjectId,
-  projectId: { type: ObjectId, ref: 'Project', required: true, index: true },
+  _id: String,
   title: { type: String, required: true, trim: true },
   description: { type: String },
-  status: { type: String, enum: ['To Do', 'In Progress', 'In Review', 'Done'], default: 'To Do', index: true },
-  priority: { type: String, enum: ['Low', 'Medium', 'High', 'Critical'], default: 'Medium', index: true },
-  assignees: [{ type: ObjectId, ref: 'User' }],
-  reporter: { type: ObjectId, ref: 'User', required: true },
+  priority: { type: String },
+  status: { type: String },
+  assignedTo: { type: String, ref: 'User', index: true },
+  projectId: { type: String, ref: 'Project', required: true, index: true },
   dueDate: { type: Date },
-  attachments: [{
-    url: String,
-    filename: String,
-    uploadedAt: { type: Date, default: Date.now }
-  }],
-  tags: [String],
-  createdAt: Date,
-  updatedAt: Date
+  createdAt: { type: Date, default: Date.now }
 }
 ```
 
 #### Comments Collection
 ```javascript
 {
-  _id: ObjectId,
-  taskId: { type: ObjectId, ref: 'Task', required: true, index: true },
-  userId: { type: ObjectId, ref: 'User', required: true },
-  content: { type: String, required: true, trim: true },
-  createdAt: Date,
-  updatedAt: Date
+  _id: String,
+  taskId: { type: String, ref: 'Task', required: true, index: true },
+  userId: { type: String, ref: 'User', required: true, index: true },
+  message: { type: String, required: true },
+  createdAt: { type: Date, default: Date.now }
 }
 ```
 
 #### ActivityLogs Collection
 ```javascript
 {
-  _id: ObjectId,
-  projectId: { type: ObjectId, ref: 'Project', required: true, index: true },
-  taskId: { type: ObjectId, ref: 'Task' },
-  userId: { type: ObjectId, ref: 'User', required: true },
-  action: { type: String, required: true }, // e.g., 'TASK_MOVED', 'COMMENT_ADDED', 'TASK_ASSIGNED'
-  description: { type: String, required: true },
-  createdAt: { type: Date, default: Date.now }
+  _id: String,
+  userId: { type: String, ref: 'User', required: true, index: true },
+  projectId: { type: String, ref: 'Project', required: true, index: true },
+  action: { type: String, required: true },
+  timestamp: { type: Date, default: Date.now }
 }
 ```
+
 
 ---
 
